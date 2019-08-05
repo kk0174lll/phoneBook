@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>phoneBook</title>
+  <script type="text/javascript" src="js/vendor/jquery-3.4.1.min.js"></script>
+  <script type="text/javascript" src="js/vendor/bootstrap.min.js"></script>
+  <script type="text/javascript" src="js/utils.js"></script>
+  <script type="text/javascript" src="js/paginator.js"></script>
+  <script type="text/javascript" src="js/phoneBook.js"></script>
+  <link rel="stylesheet" type="text/css" href="css/vendor/bootstrap.min.css"/>
+  <link rel="stylesheet" type="text/css" href="css/main.css"/>
+</head>
+<body>
+
+<div class="wait-block">
+</div>
+<div class="spinner-center">
+  <div class="spinner-border" role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+</div>
+
+<div class="content">
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item ">
+          <a class="nav-link" href="./worksPlace">Места работы</a>
+        </li>
+        <li class="nav-item active">
+          <a class="nav-link" href="./phoneBook">Телефонная книга<span class="sr-only">(current)</span></a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <div id="alertSuccess" class="alert alert-success alert-dismissible fade show" role="alert" style="display: none">
+    <p id="alertSuccessText"></p>
+    <button type="button" class="close" data-hide="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div id="alertDanger" class="alert alert-danger alert-dismissible fade show" role="alert" style="display: none">
+    <p id="alertDangerText"></p>
+    <button type="button" class="close" data-hide="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+
+  <div class="topBlock">
+    <form>
+      <div class="form-row">
+        <div class="form-group col-md-2">
+          <label for="lastName">Фамилия</label>
+          <input type="text" class="form-control" id="lastName" placeholder="Фамилия">
+        </div>
+        <div class="form-group col-md-2">
+          <label for="firstName">Имя</label>
+          <input type="text" class="form-control" id="firstName" placeholder="Имя">
+        </div>
+        <div class="form-group col-md-3">
+          <label for="workPhone">Рабочий телефон</label>
+          <input type="text" class="form-control" id="workPhone" placeholder="Рабочий телефон">
+        </div>
+        <div class="form-group col-md-3">
+          <label for="mobilePhone">Мобильный телефон</label>
+          <input type="text" class="form-control" id="mobilePhone" placeholder="Мобильный телефон">
+        </div>
+        <div class="form-group col-md-3">
+          <label for="mail">e-mail</label>
+          <input type="text" class="form-control" id="mail" placeholder="e-mail">
+        </div>
+        <div class="form-group col-md-3">
+          <label for="birthDate">Дата рождения</label>
+          <input type="date" class="form-control" id="birthDate" placeholder="Дата рождения">
+        </div>
+        <div class="form-group col-md-3">
+          <label for="work">Место работы</label>
+          <input type="text" class="form-control" id="work" placeholder="Место работы">
+        </div>
+      </div>
+    </form>
+    <div class="btn-group" role="group">
+      <button id="btnSearch" class="btn btn-info">Поиск</button>
+      <button id="btnClear" class="btn btn-secondary">Очистить фильтр</button>
+    </div>
+  </div>
+  <div class="bottomBlock">
+    <div id="search_results">
+      <p class="right" style="text-align: right;">Всего записей в телефонной книге, удовлетворяющих условиям поиска:
+        <strong id="allCount"></strong></p>
+      <div class="clear"></div>
+      <table id="resultsTable" class="table" data-paging-count="" data-paging-page="">
+        <thead class="thead-light">
+        <tr>
+          <th>Фамилия</th>
+          <th>Имя</th>
+          <th>Рабочий телефон</th>
+          <th>Мобильный телефон</th>
+          <th>e-mail</th>
+          <th>Дата рождения</th>
+          <th>Место работы</th>
+        </tr>
+        </thead>
+        <tbody id="resultsTableBody">
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+</body>
+</html>

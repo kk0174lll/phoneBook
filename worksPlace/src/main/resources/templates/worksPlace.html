@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <title>worksPlace</title>
+  <script type="text/javascript" src="js/vendor/jquery-3.4.1.min.js"></script>
+  <script type="text/javascript" src="js/vendor/bootstrap.min.js"></script>
+  <script type="text/javascript" src="js/utils.js"></script>
+  <script type="text/javascript" src="js/paginator.js"></script>
+  <script type="text/javascript" src="js/worksPlace.js"></script>
+  <link rel="stylesheet" type="text/css" href="css/vendor/bootstrap.min.css"/>
+  <link rel="stylesheet" type="text/css" href="css/main.css"/>
+</head>
+<body>
+
+<div class="wait-block">
+</div>
+<div class="spinner-center">
+  <div class="spinner-border" role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+</div>
+
+<div class="content">
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item active">
+          <a class="nav-link" href="./worksPlace">Места работы<span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="./phoneBook">Телефонная книга</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <div id="alertSuccess" class="alert alert-success alert-dismissible fade show" role="alert" style="display: none">
+    <p id="alertSuccessText"></p>
+    <button type="button" class="close" data-hide="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div id="alertDanger" class="alert alert-danger alert-dismissible fade show" role="alert" style="display: none">
+    <p id="alertDangerText"></p>
+    <button type="button" class="close" data-hide="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+
+  <div class="topBlock">
+    <form>
+      <div class="form-row">
+        <div class="form-group col-md-2">
+          <label for="inputSurname">Фамилия</label>
+          <input type="text" class="form-control" id="inputSurname" placeholder="Фамилия">
+        </div>
+        <div class="form-group col-md-2">
+          <label for="inputName">Имя</label>
+          <input type="text" class="form-control" id="inputName" placeholder="Имя">
+        </div>
+        <div class="form-group col-md-3">
+          <label for="inputWork">Место работы</label>
+          <input type="text" class="form-control" id="inputWork" placeholder="Место работы">
+        </div>
+        <div class="form-group col-md-3">
+          <label for="inputAddress">Адрес работы</label>
+          <input type="text" class="form-control" id="inputAddress" placeholder="Адрес работы">
+        </div>
+      </div>
+    </form>
+    <div class="btn-group" role="group">
+      <button id="btnSearch" class="btn btn-info">Поиск</button>
+      <button id="btnClear" class="btn btn-secondary">Очистить фильтр</button>
+      <button id="btnAdd" class="btn btn-primary">Добавить</button>
+    </div>
+  </div>
+  <div class="bottomBlock">
+    <div id="search_results">
+      <p class="right" style="text-align: right;">Всего Мест работы, удовлетворяющих условиям поиска: <strong id="allCount"></strong></p>
+      <div class="clear"></div>
+      <table id="resultsTable" class="table" data-paging-count="" data-paging-page="">
+        <thead class="thead-light">
+        <tr>
+          <th>Фамилия</th>
+          <th>Имя</th>
+          <th>Место работы</th>
+          <th>Адрес работы</th>
+        </tr>
+        </thead>
+        <tbody id="resultsTableBody">
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+
+</body>
+</html>
