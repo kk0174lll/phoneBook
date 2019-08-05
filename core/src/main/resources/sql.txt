@@ -1,0 +1,258 @@
+-- Table: public."phoneBook"
+
+-- DROP TABLE public."phoneBook";
+
+CREATE TABLE public."phoneBook"
+(
+    id integer NOT NULL DEFAULT nextval('"phoneBook_id_seq"'::regclass),
+    lastname text COLLATE pg_catalog."default",
+    firstname text COLLATE pg_catalog."default",
+    workphone text COLLATE pg_catalog."default",
+    mobilephone text COLLATE pg_catalog."default",
+    mail text COLLATE pg_catalog."default",
+    birthdate date,
+    work text COLLATE pg_catalog."default",
+    CONSTRAINT "phoneBook_pkey" PRIMARY KEY (id),
+    CONSTRAINT phonebook_unique UNIQUE (lastname, firstname)
+
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public."phoneBook"
+    OWNER to postgres;
+
+-- Table: public."worksPlace"
+
+-- DROP TABLE public."worksPlace";
+
+CREATE TABLE public."worksPlace"
+(
+    work text COLLATE pg_catalog."default",
+    surname text COLLATE pg_catalog."default",
+    name text COLLATE pg_catalog."default",
+    id integer NOT NULL DEFAULT nextval('"worksPlace_id_seq"'::regclass),
+    address text COLLATE pg_catalog."default",
+    CONSTRAINT "worksPlace_pkey" PRIMARY KEY (id),
+    CONSTRAINT worksplace_unique UNIQUE (surname, name)
+
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public."worksPlace"
+    OWNER to postgres;
+-- FUNCTION: public.add_phonebook(text, text, text, text, text, date, text)
+
+-- DROP FUNCTION public.add_phonebook(text, text, text, text, text, date, text);
+
+CREATE OR REPLACE FUNCTION public.add_phonebook(
+	inlastname text,
+	infirstname text,
+	inworkphone text,
+	inmobilephone text,
+	inmail text,
+	inbirthdate date,
+	inwork text)
+    RETURNS text
+    LANGUAGE 'plpgsql'
+
+    COST 100
+    VOLATILE 
+AS $BODY$
+DECLARE 
+    resultText text;    
+BEGIN
+   BEGIN
+  INSERT INTO public."phoneBook"(lastname, firstname,workphone,mobilephone,mail,birthdate,work) VALUES (inlastname,infirstname,inworkphone,inmobilephone,inmail,inbirthdate,inwork);
+EXCEPTION
+  WHEN unique_violation THEN
+    resultText:='Запись в телефонной книге для ' || inlastname||' '|| infirstname || ' уже существует';
+ END;
+   RETURN resultText;    
+END; 
+$BODY$;
+
+ALTER FUNCTION public.add_phonebook(text, text, text, text, text, date, text)
+    OWNER TO postgres;
+-- FUNCTION: public.add_worksplace(text, text, text, text)
+
+-- DROP FUNCTION public.add_worksplace(text, text, text, text);
+
+CREATE OR REPLACE FUNCTION public.add_worksplace(
+	inname text,
+	insurname text,
+	inwork text,
+	inaddress text)
+    RETURNS text
+    LANGUAGE 'plpgsql'
+
+    COST 100
+    VOLATILE 
+AS $BODY$
+DECLARE 
+    resultText text;    
+BEGIN
+   BEGIN
+  INSERT INTO public."worksPlace"(name, surname,work,address) VALUES (inName,inSurname,inWork,inAddress);
+EXCEPTION
+  WHEN unique_violation THEN
+    resultText:='Рабочее место для ' || inname||' '|| insurname || ' уже существует'; 
+	END;
+   RETURN resultText;
+END; 
+$BODY$;
+
+ALTER FUNCTION public.add_worksplace(text, text, text, text)
+    OWNER TO postgres;
+-- FUNCTION: public.search_phonebook(text, text, text, text, text, date, text, integer, integer)
+
+-- DROP FUNCTION public.search_phonebook(text, text, text, text, text, date, text, integer, integer);
+
+CREATE OR REPLACE FUNCTION public.search_phonebook(
+	inlastname text,
+	infirstname text,
+	inworkphone text,
+	inmobilephone text,
+	inmail text,
+	inbirthdate date,
+	inwork text,
+	rowbegin integer,
+	rowend integer)
+    RETURNS TABLE(lastname text, firstname text, workphone text, mobilephone text, mail text, birthdate date, work text) 
+    LANGUAGE 'plpgsql'
+
+    COST 100
+    VOLATILE 
+    ROWS 1000
+AS $BODY$
+    DECLARE
+      ref refcursor;                                                     
+    BEGIN
+      return Query (		
+		  select main.lastname , main.firstname , main.workphone , main.mobilephone,
+		  main.mail , main.birthdate , main.work		  from (
+		  SELECT row_number() over(ORDER BY wp.lastname) row_num, 
+		  wp.lastname , wp.firstname , wp.workphone , wp.mobilephone, wp.mail , wp.birthdate , wp.work
+      FROM public."phoneBook" wp 
+	where upper(wp.lastname) LIKE '%' || upper(inlastname) || '%'
+	  and upper(wp.firstname) LIKE '%' || upper(infirstname) || '%'
+	  and upper(wp.workphone) LIKE '%' || upper(inworkphone) || '%'
+	  and upper(wp.mobilephone) LIKE '%' || upper(inmobilephone) || '%'
+	  and upper(wp.mail) LIKE '%' || upper(inmail) || '%'
+	  and upper(wp.work) LIKE '%' || upper(inwork) || '%') main
+	  where row_num BETWEEN rowBegin AND rowEnd);                                                       
+    END;
+    $BODY$;
+
+ALTER FUNCTION public.search_phonebook(text, text, text, text, text, date, text, integer, integer)
+    OWNER TO postgres;
+-- FUNCTION: public.search_phonebook_count(text, text, text, text, text, date, text)
+
+-- DROP FUNCTION public.search_phonebook_count(text, text, text, text, text, date, text);
+
+CREATE OR REPLACE FUNCTION public.search_phonebook_count(
+	inlastname text,
+	infirstname text,
+	inworkphone text,
+	inmobilephone text,
+	inmail text,
+	inbirthdate date,
+	inwork text)
+    RETURNS integer
+    LANGUAGE 'plpgsql'
+
+    COST 100
+    VOLATILE 
+AS $BODY$
+DECLARE 
+    resultCount INTEGER;    
+BEGIN
+   SELECT COUNT(*)
+      INTO resultCount
+      FROM public."phoneBook" wp
+	  where
+	  upper(wp.lastname) LIKE '%' || upper(inlastname) || '%'
+	  and upper(wp.firstname) LIKE '%' || upper(infirstname) || '%'
+	  and upper(wp.workphone) LIKE '%' || upper(inworkphone) || '%'
+	  and upper(wp.mobilephone) LIKE '%' || upper(inmobilephone) || '%'
+	  and upper(wp.mail) LIKE '%' || upper(inmail) || '%'
+	  and upper(wp.work) LIKE '%' || upper(inwork) || '%';
+ 
+   RETURN resultCount;
+END; $BODY$;
+
+ALTER FUNCTION public.search_phonebook_count(text, text, text, text, text, date, text)
+    OWNER TO postgres;
+-- FUNCTION: public.search_worksplace(text, text, text, text, integer, integer)
+
+-- DROP FUNCTION public.search_worksplace(text, text, text, text, integer, integer);
+
+CREATE OR REPLACE FUNCTION public.search_worksplace(
+	inname text,
+	insurname text,
+	inwork text,
+	inaddress text,
+	rowbegin integer,
+	rowend integer)
+    RETURNS TABLE(name text, surname text, work text, address text) 
+    LANGUAGE 'plpgsql'
+
+    COST 100
+    VOLATILE 
+    ROWS 1000
+AS $BODY$
+    DECLARE
+      ref refcursor;                                                     
+    BEGIN
+      return Query (		
+		  select main.name , main.surname , main.work , main.address  from (
+		  SELECT row_number() over(ORDER BY wp.name) row_num, wp.name , wp.surname , wp.work , wp.address
+      FROM public."worksPlace" wp 
+	where upper(wp.address) LIKE '%' || upper(inaddress) || '%'
+	  and upper(wp.name) LIKE '%' || upper(inname) || '%'
+	  and upper(wp.surname) LIKE '%' || upper(insurname) || '%'
+	  and upper(wp.work) LIKE '%' || upper(inwork) || '%') main
+	  where row_num BETWEEN rowBegin AND rowEnd);                                                       
+    END;
+    $BODY$;
+
+ALTER FUNCTION public.search_worksplace(text, text, text, text, integer, integer)
+    OWNER TO postgres;
+
+-- FUNCTION: public.search_worksplace_count(text, text, text, text)
+
+-- DROP FUNCTION public.search_worksplace_count(text, text, text, text);
+
+CREATE OR REPLACE FUNCTION public.search_worksplace_count(
+	inname text,
+	insurname text,
+	inwork text,
+	inaddress text)
+    RETURNS integer
+    LANGUAGE 'plpgsql'
+
+    COST 100
+    VOLATILE 
+AS $BODY$
+DECLARE 
+    resultCount INTEGER;    
+BEGIN
+   SELECT COUNT(*)
+      INTO resultCount
+      FROM public."worksPlace" wp
+	  where
+	  upper(wp.address) LIKE '%' || upper(inaddress) || '%'
+	  and upper(wp.name) LIKE '%' || upper(inname) || '%'
+	  and upper(wp.surname) LIKE '%' || upper(insurname) || '%'
+	  and upper(wp.work) LIKE '%' || upper(inwork) || '%';
+ 
+   RETURN resultCount;
+END; $BODY$;
+
+ALTER FUNCTION public.search_worksplace_count(text, text, text, text)
+    OWNER TO postgres;
