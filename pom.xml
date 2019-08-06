@@ -28,6 +28,7 @@
     <module>core</module>
     <module>worksPlace</module>
     <module>phoneBook</module>
+    <module>camelRoute</module>
   </modules>
 
   <dependencyManagement>
