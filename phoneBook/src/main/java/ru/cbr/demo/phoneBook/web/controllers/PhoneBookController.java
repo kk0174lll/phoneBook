@@ -64,7 +64,7 @@ public class PhoneBookController
     } catch (Exception e) {
       response.errorMessage = "не удалось удалить файл";
       response.exceptionMessage = e.getMessage();
-      logger.error(e.getMessage());
+      logger.error(e.getMessage(), e);
     }
     return response;
   }
@@ -80,7 +80,7 @@ public class PhoneBookController
     } catch (Exception e) {
       response.errorMessage = "не удалось переместить файл";
       response.exceptionMessage = e.getMessage();
-      logger.error(e.getMessage());
+      logger.error(e.getMessage(), e);
     }
     return response;
   }

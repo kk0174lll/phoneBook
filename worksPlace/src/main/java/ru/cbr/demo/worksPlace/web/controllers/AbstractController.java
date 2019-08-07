@@ -49,7 +49,7 @@ public abstract class AbstractController<T>
       response.page = filter.page;
     } catch (Exception e) {
       response.errorMessage = "Ошибка при поиске записи";
-      logger.error(e.getMessage());
+      logger.error(e.getMessage(), e);
     }
     return response;
   }
@@ -71,7 +71,7 @@ public abstract class AbstractController<T>
     } catch (Exception e) {
       response.exceptionMessage = e.getMessage();
       response.errorMessage = "Ошибка при добавлении новой записи";
-      logger.error(e.getMessage());
+      logger.error(e.getMessage(), e);
     }
     return response;
   }
