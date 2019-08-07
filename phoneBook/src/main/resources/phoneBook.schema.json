@@ -1,35 +1,35 @@
 {
   "type": "object",
   "properties": {
-    "lastname": {
+    "lastName": {
       "type": "string",
       "maxLength": 20
     },
-    "firstname": {
+    "firstName": {
       "type": "string",
       "maxLength": 10
     },
-    "workphone": {
+    "workPhone": {
       "type": "string"
     },
-    "mobilephone": {
+    "mobilePhone": {
       "type": "string"
     },
     "mail": {
       "type": "string",
       "pattern": "^(?=.{1,41}$)(\\S){1,30}@(\\S){1,10}$"
     },
-    "birthdate": {
+    "birthDate": {
       "type": "string",
       "format": "date"
     }
   },
   "required": [
-    "lastname",
-    "firstname",
-    "workphone",
-    "mobilephone",
+    "lastName",
+    "firstName",
+    "workPhone",
+    "mobilePhone",
     "mail",
-    "birthdate"
+    "birthDate"
   ]
 }

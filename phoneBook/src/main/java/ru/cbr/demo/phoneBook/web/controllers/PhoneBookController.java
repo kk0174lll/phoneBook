@@ -2,6 +2,7 @@ package ru.cbr.demo.phoneBook.web.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import models.PhoneBook;
+import org.everit.json.schema.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.cbr.demo.phoneBook.web.models.FileRequest;
 import ru.cbr.demo.phoneBook.web.models.PhoneBookResponse;
 import ru.cbr.demo.phoneBook.web.processor.PhoneBookProcess;
+import ru.cbr.demo.phoneBook.web.processor.PhoneBookSchema;
 import utils.Utils;
 
 @RestController
@@ -20,11 +22,13 @@ public class PhoneBookController
   private final ObjectMapper objectMapper;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final PhoneBookProcess processor;
+  private final PhoneBookSchema phoneBookSchema;
 
-  public PhoneBookController(ObjectMapper objectMapper, PhoneBookProcess processor)
+  public PhoneBookController(ObjectMapper objectMapper, PhoneBookProcess processor, PhoneBookSchema phoneBookSchema)
   {
     this.objectMapper = objectMapper;
     this.processor = processor;
+    this.phoneBookSchema = phoneBookSchema;
   }
 
   @RequestMapping (method = RequestMethod.POST, produces = Utils.CONTENT_TYPE, value = "/add")
@@ -35,11 +39,16 @@ public class PhoneBookController
     try {
       String phoneBookJson = objectMapper.writeValueAsString(phoneBook);
       logger.info("incoming add obj: " + phoneBookJson);
+      phoneBookSchema.validate(phoneBookJson);
       response.fileName = processor.writePrepareFile(phoneBookJson);
+    } catch (ValidationException e) {
+      response.errorMessage = "ошибка валидации файла";
+      response.exceptionMessage = e.getMessage();
+      logger.error(e.getMessage());
     } catch (Exception e) {
       response.errorMessage = "не удалось сохранить файл";
       response.exceptionMessage = e.getMessage();
-      logger.error(e.getMessage());
+      logger.error(e.getMessage(), e);
     }
     return response;
   }

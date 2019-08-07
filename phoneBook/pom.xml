@@ -63,6 +63,11 @@
       <artifactId>log4j-over-slf4j</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>org.everit.json</groupId>
+      <artifactId>org.everit.json.schema</artifactId>
+      <version>1.0.0</version>
+    </dependency>
   </dependencies>
 
   <build>
